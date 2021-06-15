@@ -18,7 +18,7 @@ namespace WpfApp1.Model.Data
                 {
                     var newClient = new Client { Fio = fio, PassNum = passNum };
                     db.Clients.Add(newClient);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Клиент успешно добавлен";
                 }
 
@@ -27,15 +27,15 @@ namespace WpfApp1.Model.Data
         }
 
         //Add County
-        public static string AddNewCountry(string name)
+        public static string AddNewCountry(string name, double flyprice)
         {
             using (var db = new ApplicationContext())
             {
                 if (!db.Countries.Any(el => el.Name == name))
                 {
-                    var newCountry = new Country { Name = name };
+                    var newCountry = new Country { Name = name, FlyPrice = flyprice};
                     db.Countries.Add(newCountry);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Страна успешно добавлена";
                 }
 
@@ -44,15 +44,15 @@ namespace WpfApp1.Model.Data
         }
 
         //Add Discount
-        public static string AddNewDiscount(int discount)
+        public static string AddNewDiscount(int discount, string name)
         {
             using (var db = new ApplicationContext())
             {
-                if (!db.Discounts.Any(el => el.Percent == discount))
+                if (!db.Discounts.Any(el => el.Name == name))
                 {
-                    var newDiscount = new Discount { Percent = discount };
+                    var newDiscount = new Discount { Name = name, Percent = discount };
                     db.Discounts.Add(newDiscount);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Скидка успешно добавлена";
                 }
 
@@ -61,15 +61,15 @@ namespace WpfApp1.Model.Data
         }
 
         //Add Hotel
-        public static string AddNewHotel(string name, int hotelClass)
+        public static string AddNewHotel(string name, int hotelClass, double price)
         {
             using (var db = new ApplicationContext())
             {
                 if (!db.Hotels.Any(el => el.Name == name))
                 {
-                    var newHotel = new Hotel { Name = name, Class = hotelClass };
+                    var newHotel = new Hotel { Name = name, Class = hotelClass, PriceByNight = price};
                     db.Hotels.Add(newHotel);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Отель успешно добавлена";
                 }
 
@@ -78,15 +78,15 @@ namespace WpfApp1.Model.Data
         }
 
         //Add Nutrition
-        public static string AddNewNutrition(string name)
+        public static string AddNewNutrition(string name, double price)
         {
             using (var db = new ApplicationContext())
             {
                 if (!db.Nutritions.Any(el => el.Name == name))
                 {
-                    var newNutrition = new Nutrition { Name = name };
+                    var newNutrition = new Nutrition { Name = name, PriceByDay = price};
                     db.Nutritions.Add(newNutrition);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Тип питания успешно добавлена";
                 }
 
@@ -103,7 +103,7 @@ namespace WpfApp1.Model.Data
                 {
                     var newStaff = new Staff { Fio = fio, Salary = salary };
                     db.Staves.Add(newStaff);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Сотрудник успешно добавлена";
                 }
 
@@ -112,15 +112,15 @@ namespace WpfApp1.Model.Data
         }
 
         //Add Tour type
-        public static string AddNewTourType(string type)
+        public static string AddNewTourType(string type, double price)
         {
             using (var db = new ApplicationContext())
             {
                 if (!db.TourTypes.Any(el => el.Type == type))
                 {
-                    var newTourType = new TourType { Type = type };
+                    var newTourType = new TourType { Type = type, Price = price};
                     db.TourTypes.Add(newTourType);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                     return "Тип тура успешно добавлена";
                 }
 
@@ -129,23 +129,43 @@ namespace WpfApp1.Model.Data
         }
 
         //Add Tour
-        public static string AddNewTour(double price, DateTime departureTime, int personCount, int daysCount,
+        public static string AddNewTour(DateTime departureTime, int personCount, int daysCount,
             Country country, Hotel hotel, TourType tourType, Nutrition nutrition, Client client, Discount discount)
         {
             using (var db = new ApplicationContext())
             {
-                var newTour = new Tour(price, departureTime, personCount, daysCount, country, hotel, tourType,
-                    nutrition, client, discount);
-                if (db.Tours.Any(el => el.Equals(newTour)))
+                Tour tour = new Tour()
                 {
-                    db.Tours.Add(newTour);
-                    db.SaveChangesAsync();
-                    return "Тур успешно добавлен";
-                }
+                    DepartureDate = departureTime,
+                    PersonCount =  personCount,
+                    DaysCount =  daysCount,
+                    IdCountry = country.Id,
+                    IdHotel =  hotel.Id,
+                    IdTourType = tourType.Id,
+                    IdNutrition = nutrition.Id,
+                    IdClient =  client.Id,
+                    IdDiscount =  discount.Id
+                };
 
-                return $"Данный тур уже существует";
+                double temp = (hotel.PriceByNight * daysCount) + (nutrition.PriceByDay * daysCount) + (country.FlyPrice * 2) + tourType.Price;
+                double agencyPrice = temp * 0.3 + temp;
+                if (discount.Percent != 0)
+                    agencyPrice = agencyPrice - (agencyPrice * (discount.Percent / 100.0));
+
+                tour.Price = agencyPrice;
+                tour.Status = true;
+                db.Tours.Add(tour);
+                db.SaveChanges();
+                return "Тур успешно добавлен";
             }
         }
+
+        public static string ChangeTourStatus(Tour tour)
+        {
+            tour.Status = tour.ChangeStatus();
+            return $"Статус тура номер {tour.Id} изменён";
+        }
+
 
         #endregion
 
@@ -156,9 +176,12 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (client == null)
+                    return "Невозможно удалить пустое значение";
                 db.Clients.Remove(client);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Клиент {client.Fio} удалён";
+
             }
         }
 
@@ -167,8 +190,10 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (country == null)
+                    return "Невозможно удалить пустое значение";
                 db.Countries.Remove(country);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Страна {country.Name} удалена";
             }
         }
@@ -178,9 +203,11 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (discount == null)
+                    return "Невозможно удалить пустое значение";
                 db.Discounts.Remove(discount);
-                db.SaveChangesAsync();
-                return $"Скидка в {discount.Percent}% удалена";
+                db.SaveChanges();
+                return $"Скидка {discount.Name} удалена";
             }
         }
 
@@ -189,9 +216,12 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (hotel == null)
+                    return "Невозможно удалить пустое значение";
                 db.Hotels.Remove(hotel);
-                db.SaveChangesAsync();
-                return $"Отель {hotel.Name}";
+                db.SaveChanges();
+                return $"Отель {hotel.Name} удалён";
+
             }
         }
 
@@ -200,8 +230,10 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (nutrition == null)
+                    return "Невозможно удалить пустое значение";
                 db.Nutritions.Remove(nutrition);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Питание {nutrition.Name} удалено";
             }
         }
@@ -211,8 +243,10 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (staff == null)
+                    return "Невозможно удалить пустое значение";
                 db.Staves.Remove(staff);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Сотрудник {staff.Fio} удалён";
             }
         }
@@ -222,8 +256,10 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (type == null)
+                    return "Невозможно удалить пустое значение";
                 db.TourTypes.Remove(type);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Тип тура {type.Type} удалён";
             }
         }
@@ -233,8 +269,10 @@ namespace WpfApp1.Model.Data
         {
             using (var db = new ApplicationContext())
             {
+                if (tour == null)
+                    return "Невозможно удалить пустое значение";
                 db.Tours.Remove(tour);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return $"Запись тура под номером {tour.Id} удалена";
             }
         }
@@ -242,6 +280,57 @@ namespace WpfApp1.Model.Data
         #endregion
 
         #region GetMethods
+
+        public static Hotel GetHotelById(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                Hotel hotel = db.Hotels.FirstOrDefault(el => el.Id == id);
+                return hotel;
+            }
+        }
+
+        public static Country GetCountryHyId(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                Country country = db.Countries.FirstOrDefault(el => el.Id == id);
+                return country;
+            }
+        }
+        public static TourType GetTourTypeById(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                TourType type = db.TourTypes.FirstOrDefault(el => el.Id == id);
+                return type;
+            }
+        }
+        public static Nutrition GetNutritionById(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                Nutrition nutrition = db.Nutritions.FirstOrDefault(el => el.Id == id);
+                return nutrition;
+            }
+        }
+        public static Client GetClientById(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                Client client = db.Clients.FirstOrDefault(el => el.Id == id);
+                return client;
+            }
+        }
+
+        public static Discount GetDiscountById(int id)
+        {
+            using (var db = new ApplicationContext())
+            {
+                Discount discount = db.Discounts.FirstOrDefault(el => el.Id == id);
+                return discount;
+            }
+        }
 
         public static List<Client> GetAllClients()
         {

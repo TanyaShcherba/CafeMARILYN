@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewModel="clr-namespace:WpfApp1.ViewModel"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -14,7 +15,11 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Name="LogWindow">
+    <Window.DataContext>
+        <viewModel:DataManage/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -68,7 +73,8 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center" 
                 Width="500" Height="32"
-                Command="{Binding OpenAdminField}"
-                CommandParameter="{Binding ElementName=LoginWindow}"/>
+                Command="{Binding OpenWindow}"
+                Style="{DynamicResource MaterialDesignRaisedLightButton}"
+                CommandParameter="{Binding ElementName=LogWindow}" Cursor="Hand"/>
     </Grid>
 </Window>

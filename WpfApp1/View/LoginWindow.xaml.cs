@@ -11,7 +11,6 @@ namespace WpfApp1.View
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new DataManage();
         }
     }
 }
