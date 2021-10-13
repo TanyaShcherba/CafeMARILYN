@@ -15,39 +15,18 @@ namespace WpfApp1.ViewModel.Workers
     {
         public static void OpenWindow(Window window)
         {
-            if(window is AgentMainWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AdminMainWindow)
-                SetCenterPosAndOpen(window);
-
-            if (window is AddHotelWindow)
-                SetCenterPosAndOpen(window);
-
-            if (window is MainWindow)
-                SetCenterPosAndOpen(window);
-
-            if (window is AddNewCountryWindow)
-                SetCenterPosAndOpen(window);
-
-            if (window is AddNutritionWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AddClientWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AddStaffWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AddTourTypeWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AddDiscountWindow)
-                SetCenterPosAndOpen(window);
-
-            if(window is AddTourWindow)
-                SetCenterPosAndOpen(window);
-
+            switch (window)
+            {
+                case AddBaristaWindow:
+                case BaristaMainWindow:
+                case AddDrinkWindow:
+                case BaristaWindow:
+                case MainWindow:
+                case AddDesertWindow:
+                case AdminMainWindow:
+                    SetCenterPosAndOpen(window);
+                    break;
+            }
         }
 
         public static void CloseWindow(Window window)

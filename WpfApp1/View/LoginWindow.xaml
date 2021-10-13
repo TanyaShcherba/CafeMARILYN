@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280"
+        Title="Авторизация рабочего места бариста кафе MARILYN" Height="750" Width="600"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModel="clr-namespace:WpfApp1.ViewModel"
+        xmlns:wpfApp1="clr-namespace:WpfApp1"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -17,64 +18,64 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Name="LogWindow">
+
     <Window.DataContext>
         <viewModel:DataManage/>
     </Window.DataContext>
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="100"/>
-        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="/View/Курсовая.jpg"/>
+        </Grid.Background>
 
-        <TextBlock Grid.Row="1"
-                   Text="Вход в систему"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Style="{StaticResource MaterialDesignHeadline2TextBlock}" Height="72" Width="420"/>
 
-        <TextBox Grid.Row="3"
+
+        <TextBlock
+                   Text="Cafe MARILYN"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   Style="{StaticResource MaterialDesignHeadline2TextBlock}" Height="45" Width="408" Margin="100,141,0,0" Foreground="#DDFFFFFF" FontFamily="Engravers MT" FontSize="40"/>
+
+        <TextBox
                  x:Name="LoginBox"
-                 VerticalAlignment="Center"
+                 VerticalAlignment="Top"
                  HorizontalAlignment="Center"
                  materialDesign:HintAssist.Hint="Логин"
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}" 
                  Text="{Binding Login}"
-                 Height="50"
-                 Width="500"/>
+                 Height="48"
+                 Width="340" FontFamily="Century Gothic" Panel.ZIndex="5" Background="White" Cursor="IBeam" Margin="0,355,0,0"/>
 
-        <ComboBox Grid.Row="2"
+        <ComboBox
                   HorizontalAlignment="Center"
-                  Height="50"
-                  Width="500"
+                  Height="52"
+                  Width="340"
                   materialDesign:ComboBoxAssist.ShowSelectedItem="True"
                   materialDesign:HintAssist.Hint="Должность"
                   x:Name="DeliveryType"
                   Text="{Binding Position}"
-                  Style="{StaticResource MaterialDesignComboBox}">
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Background="White" Margin="0,277,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" SelectionChanged="DeliveryType_SelectionChanged">
             <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}">Администратор</TextBlock>
-            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}">Турагент</TextBlock>
+            <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}">Бариста</TextBlock>
         </ComboBox>
 
-        <TextBox Grid.Row="4"
+        <TextBox
                  x:Name="PasswordBox"
-                 VerticalAlignment="Center"
+                 VerticalAlignment="Top"
                  HorizontalAlignment="Center"
                  materialDesign:HintAssist.Hint="Пароль"
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Width="500"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Width="340"
                  Text="{Binding Password}"
-                 Height="50" Cursor="IBeam"/>
-        <Button Grid.Row="5"
+                 Height="48" Cursor="IBeam" Margin="0,436,0,0" FontFamily="Century Gothic" Background="White"/>
+        <Button
                 Content="Войти"
-                VerticalAlignment="Center"
+                VerticalAlignment="Top"
                 HorizontalAlignment="Center" 
-                Width="500" Height="32"
+                Width="220" Height="50"
                 Command="{Binding OpenWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}"
-                CommandParameter="{Binding ElementName=LogWindow}" Cursor="Hand"/>
+                Style="{DynamicResource MaterialDesignOutlinedButton}"
+                CommandParameter="{Binding ElementName=LogWindow}" Cursor="Hand" Margin="0,556,0,0" Background="#FFB80808" FontFamily="Century Gothic" FontSize="22" Foreground="White" FontWeight="Bold" FontStyle="Normal" BorderBrush="Black"/>
+        <Label Content="Вход для сотрудников " HorizontalAlignment="Left" Margin="265,177,0,0" VerticalAlignment="Top" Foreground="#DDFFFFFF" FontFamily="Century Gothic" FontSize="20" FontWeight="Bold" Width="236" Height="34"/>
     </Grid>
 </Window>

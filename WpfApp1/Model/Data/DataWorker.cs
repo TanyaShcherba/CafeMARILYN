@@ -1,401 +1,372 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WpfApp1.Model.UnitDB;
+using System.Security.Cryptography;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using Marilyn;
+using Marilyn.Data.Units;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using WpfApp1.View;
 
 namespace WpfApp1.Model.Data
 {
     public static class DataWorker
     {
-        #region AddMethods
+        public static List<Prouct> Proucts;
+        public static Barista Barista;
 
-        //Add Client
-        public static string AddNewClient(string fio, string passNum)
+        static DataWorker()
         {
-            using (var db = new ApplicationContext())
+            Proucts = new List<Prouct>();
+        }
+
+        public static void AddNewProduct(Prouct prouct)
+        {
+            Proucts.Add(prouct);
+        }
+
+        public static void RemoveProduct(Prouct prouct)
+        {
+            Proucts.Remove(prouct);
+        }
+
+        public static void ClearProducst()
+        {
+            Proucts.Clear();
+        }
+
+        public static double CalculateFinalPrice()
+        {
+            double temp = 0;
+
+            foreach (var prouct in Proucts)
             {
-                if (!db.Clients.Any(el => el.PassNum == passNum))
+                temp += prouct.Price;
+            }
+
+            return Math.Round(temp,2);
+        }
+
+        public static List<Prouct> GetAllProdList() => Proucts;
+
+        public static bool AddNewDrink(string name, string size, double price)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (!db.HotDrinks.Any(el => el.Name == name && el.Size == size))
                 {
-                    var newClient = new Client { Fio = fio, PassNum = passNum };
-                    db.Clients.Add(newClient);
+                    HotDrinks hotDrinks = new HotDrinks { Name = name, Size = size, Price = price };
+                    db.HotDrinks.Add(hotDrinks);
                     db.SaveChanges();
-                    return "Клиент успешно добавлен";
+                    return true;
                 }
 
-                return "Данный клиент уже существует";
+                return false;
             }
         }
 
-        //Add County
-        public static string AddNewCountry(string name, double flyprice)
+        public static bool AddNewDesert(string name, int weight, double price)
         {
-            using (var db = new ApplicationContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
-                if (!db.Countries.Any(el => el.Name == name))
+                if (!db.Desserts.Any(el => el.Name == name && el.Weight == weight))
                 {
-                    var newCountry = new Country { Name = name, FlyPrice = flyprice};
-                    db.Countries.Add(newCountry);
+                    Dessert dessert = new Dessert { Name = name, Weight = weight, Price = price };
+                    db.Desserts.Add(dessert);
                     db.SaveChanges();
-                    return "Страна успешно добавлена";
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public static bool AddNewBarista(string fio, int rating, double salary, string login, string pass)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (!db.Baristas.Any(el => el.Fio == fio && el.Login == login))
+                {
+                    Barista barista = new Barista { Fio = fio, Rating = rating, Salary = salary, Login = login, Password = pass};
+                    db.Baristas.Add(barista);
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public static void AddNewOrder(Barista barista)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                List<Dessert> desserts = new List<Dessert>();
+                List<HotDrinks> drinks = new List<HotDrinks>();
+
+                foreach (var prouct in Proucts)
+                {
+                    if(prouct is HotDrinks drinksProuct)
+                        drinks.Add(drinksProuct);
+
+                    if (prouct is Dessert dessertProuct)
+                        desserts.Add(dessertProuct);
                 }
 
-                return "Данная страна уже существует";
+                Order order = new Order();
+                List <Order> orders = new List<Order>();
+                orders.Add(order);
+                order.Price = CalculateFinalPrice();
+                order.OrderDateTime = DateTime.Now;
+                Cheque cheque = CreateNewCheque(barista, orders);
+                order.ChequeId = cheque.Id;
+                AddNewCheque(cheque);
+                db.Orders.Add(order);
+                foreach (var item in desserts)
+                {
+                    item.Order = order;
+                }
+                foreach (var item in drinks)
+                {
+                    item.Order = order;
+                }
+                db.SaveChanges();
+                PrintCheque(order, cheque, barista);
+                ClearProducst();
             }
         }
 
-        //Add Discount
-        public static string AddNewDiscount(int discount, string name)
+        private static void PrintCheque(Order order, Cheque cheque, Barista barista)
         {
-            using (var db = new ApplicationContext())
+            PrintDialog dialog = new PrintDialog();
+            if (dialog.ShowDialog() == true)
             {
-                if (!db.Discounts.Any(el => el.Name == name))
+                PrintForm printForm = new PrintForm();
+                printForm.Date.Text = order.OrderDateTime.ToShortDateString();
+                printForm.Time.Text = order.OrderDateTime.ToShortTimeString();
+                printForm.BaristaName.Text = barista.Fio;
+                printForm.Price.Text = order.Price.ToString() + " BYN";
+                printForm.Numer.Text = cheque.UniqNumber;
+                foreach (var prouct in Proucts)
                 {
-                    var newDiscount = new Discount { Name = name, Percent = discount };
-                    db.Discounts.Add(newDiscount);
-                    db.SaveChanges();
-                    return "Скидка успешно добавлена";
+                    printForm.Products.Items.Add(prouct.Name + " " + prouct.Price + " BYN");
+                }
+                dialog.PrintVisual(printForm.Print, "Чек");
+            }
+        }
+
+        private static Cheque CreateNewCheque(Barista barista, List<Order> order)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                Cheque cheque = new Cheque {UniqNumber = Guid.NewGuid().ToString(), BaristaId = barista.Id };
+                foreach (var order1 in order)
+                {
+                    order1.Cheque = cheque;
+                }
+                return cheque;
+            }
+        }
+        public static void AddNewCheque(Cheque cheque)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                db.Cheques.Add(cheque);
+            }
+        }
+
+        public static List<HotDrinks> GetAllCoffe()
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.HotDrinks.ToList();
+            }
+        }
+        public static List<Dessert> GetAllDessert()
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Desserts.ToList();
+            }
+        }
+
+        public static List<Barista> GetAllBarista()
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Baristas.ToList();
+            }
+        }
+
+        public static List<Order> GetAllOrders()
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Orders.ToList();
+            }
+        }
+
+        public static List<Cheque> GetAllCheques()
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Cheques.ToList();
+            }
+        }
+
+        public static List<Prouct> GetAllProduct()
+        {
+            List<Prouct> temp = new List<Prouct>();
+            temp.AddRange(GetAllCoffe());
+            temp.AddRange(GetAllDessert());
+            return temp;
+        }
+        public static Barista GetBaristaNameById(int id)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Baristas.FirstOrDefault(el => el.Id == id);
+            }
+        }
+
+        public static Cheque GetChequeById(int id)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Cheques.FirstOrDefault(el => el.Id == id);
+            }
+        }
+
+        public static string DeleteDrink(HotDrinks item)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (item == null)
+                    return "Невозможно удалить пустое значение";
+                db.HotDrinks.Remove(item);
+                db.SaveChanges();
+                return "Напиток упешно удалён";
+            }
+        }
+
+        public static string DeleteDesser(Dessert item)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (item == null)
+                    return "Невозможно удалить пустое значение";
+                db.Desserts.Remove(item);
+                db.SaveChanges();
+                return "Дессерт успешно уделён";
+            }
+        }
+
+        public static string DeleteBarista(Barista item)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (item == null)
+                    return "Невозможно удалить пустое значение";
+                db.Baristas.Remove(item);
+                db.SaveChanges();
+                return "Бариста успешно удалён";
+            }
+        }
+
+        public static string DeleteOrder(Order item)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (item == null)
+                    return "Невозможно удалить пустое значение";
+                db.Orders.Remove(item);
+                db.SaveChanges();
+                return "Данные о заказе успешно удалены";
+            }
+        }
+
+        public static string DeleteCheque(Cheque item)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (item == null)
+                    return "Невозможно удалить пустое значение";
+                db.Cheques.Remove(item);
+                db.SaveChanges();
+                return "Данные о чеке успешно удалены";
+            }
+        }
+
+        public static Barista ReturnUserByLogin(string login)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                return db.Baristas.FirstOrDefault(el => el.Login == login);
+            }
+        }
+
+        public static bool ValidateUser(string login, string pass)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                if (db.Baristas.Any(el => el.Login == login))
+                {
+                    var temp = db.Baristas.FirstOrDefault(el => el.Login == login);
+                    if (temp != null && temp.Password == pass)
+                        return true;
                 }
 
-                return "Данная скидка уже существует";
+                return false;
             }
         }
 
-        //Add Hotel
-        public static string AddNewHotel(string name, int hotelClass, double price)
+        public static void FirstInitialize()
         {
-            using (var db = new ApplicationContext())
-            {
-                if (!db.Hotels.Any(el => el.Name == name))
-                {
-                    var newHotel = new Hotel { Name = name, Class = hotelClass, PriceByNight = price};
-                    db.Hotels.Add(newHotel);
-                    db.SaveChanges();
-                    return "Отель успешно добавлена";
-                }
+            AddNewDrink("Экспрессо", "XS (30 мл)", 3);
+            AddNewDrink("Экспрессо", "S (60 мл)", 4.5);
 
-                return "Данный отель уже существует";
-            }
+            AddNewDrink("Американо", "М (120 мл)", 5);
+            AddNewDrink("Американо", "L (300 мл)", 6);
+            AddNewDrink("Американо", "XL (400 мл)", 7);
+
+            AddNewDrink("Капучино", "М (120 мл)", 4);
+            AddNewDrink("Капучино", "L (300 мл)", 5);
+            AddNewDrink("Капучино", "XL (400 мл)", 6);
+
+            AddNewDrink("Латте", "М (120 мл)", 6.5);
+            AddNewDrink("Латте", "L (300 мл)", 7.5);
+            AddNewDrink("Латте", "XL (400 мл)", 8.5);
+
+            AddNewDrink("Чай черный", "XXL (450 мл)", 8.5);
+            AddNewDrink("Чай зелёный", "XXL (450 мл)", 8.5);
+            AddNewDrink("Чай фруктовый", "XXL (450 мл)", 8.5);
+
+            AddNewDesert("Круасан с карамелью", 80, 3);
+            AddNewDesert("Круасан с карамелью", 90, 3.2);
+
+            AddNewDesert("Круасан с шоколадом", 80, 3);
+            AddNewDesert("Круасан с шоколадом", 90, 3.2);
+
+            AddNewDesert("Булочка с корицей", 80, 2);
+            AddNewDesert("Круасан с корицей", 90, 2.5);
+
+            AddNewDesert("Маффин шоколадный", 90, 3);
+            AddNewDesert("Маффин шоколадный", 100, 3.5);
+
+            AddNewDesert("Чизкейк", 100, 4);
+            AddNewDesert("Чизкейк", 140, 5.5);
+
+            AddNewDesert("Торт наполеон", 100, 4);
+            AddNewDesert("Торт наполеон", 140, 5.5);
+
+            AddNewDesert("Торт трюфельный", 140, 6);
+
+            AddNewBarista("Подсосонный Евгений", 1, 1000, "jeka", "jeka");
+            AddNewBarista("Попов Максим", 2, 1000, "maks", "maks");
+            AddNewBarista("Неретин Даниил", 3, 1000, "danik", "danik");
+            AddNewBarista("Титова Анна", 4, 1000, "anya", "anya");
+            AddNewBarista("Щерба Татьяна", 5, 1000, "enot", "enot");
         }
-
-        //Add Nutrition
-        public static string AddNewNutrition(string name, double price)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (!db.Nutritions.Any(el => el.Name == name))
-                {
-                    var newNutrition = new Nutrition { Name = name, PriceByDay = price};
-                    db.Nutritions.Add(newNutrition);
-                    db.SaveChanges();
-                    return "Тип питания успешно добавлена";
-                }
-
-                return "Данный тип питания уже существует";
-            }
-        }
-
-        //Add Staff
-        public static string AddNewStaff(string fio, double salary)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (!db.Staves.Any(el => el.Fio == fio))
-                {
-                    var newStaff = new Staff { Fio = fio, Salary = salary };
-                    db.Staves.Add(newStaff);
-                    db.SaveChanges();
-                    return "Сотрудник успешно добавлена";
-                }
-
-                return "Cотрудник уже существует";
-            }
-        }
-
-        //Add Tour type
-        public static string AddNewTourType(string type, double price)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (!db.TourTypes.Any(el => el.Type == type))
-                {
-                    var newTourType = new TourType { Type = type, Price = price};
-                    db.TourTypes.Add(newTourType);
-                    db.SaveChanges();
-                    return "Тип тура успешно добавлена";
-                }
-
-                return "Данный тип тура уже существует";
-            }
-        }
-
-        //Add Tour
-        public static string AddNewTour(DateTime departureTime, int personCount, int daysCount,
-            Country country, Hotel hotel, TourType tourType, Nutrition nutrition, Client client, Discount discount)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Tour tour = new Tour()
-                {
-                    DepartureDate = departureTime,
-                    PersonCount =  personCount,
-                    DaysCount =  daysCount,
-                    IdCountry = country.Id,
-                    IdHotel =  hotel.Id,
-                    IdTourType = tourType.Id,
-                    IdNutrition = nutrition.Id,
-                    IdClient =  client.Id,
-                    IdDiscount =  discount.Id
-                };
-
-                double temp = (hotel.PriceByNight * daysCount) + (nutrition.PriceByDay * daysCount) + (country.FlyPrice * 2) + tourType.Price;
-                double agencyPrice = temp * 0.3 + temp;
-                if (discount.Percent != 0)
-                    agencyPrice = agencyPrice - (agencyPrice * (discount.Percent / 100.0));
-
-                tour.Price = agencyPrice;
-                tour.Status = true;
-                db.Tours.Add(tour);
-                db.SaveChanges();
-                return "Тур успешно добавлен";
-            }
-        }
-
-        public static string ChangeTourStatus(Tour tour)
-        {
-            tour.Status = tour.ChangeStatus();
-            return $"Статус тура номер {tour.Id} изменён";
-        }
-
-
-        #endregion
-
-        #region RemoveMethods
-
-        //Remove Client
-        public static string DeleteClient(Client client)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (client == null)
-                    return "Невозможно удалить пустое значение";
-                db.Clients.Remove(client);
-                db.SaveChanges();
-                return $"Клиент {client.Fio} удалён";
-
-            }
-        }
-
-        //Remove Country
-        public static string DeleteCountry(Country country)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (country == null)
-                    return "Невозможно удалить пустое значение";
-                db.Countries.Remove(country);
-                db.SaveChanges();
-                return $"Страна {country.Name} удалена";
-            }
-        }
-
-        //Remove Discount
-        public static string DeleteDiscount(Discount discount)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (discount == null)
-                    return "Невозможно удалить пустое значение";
-                db.Discounts.Remove(discount);
-                db.SaveChanges();
-                return $"Скидка {discount.Name} удалена";
-            }
-        }
-
-        //Remove Hotel
-        public static string DeleteHotel(Hotel hotel)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (hotel == null)
-                    return "Невозможно удалить пустое значение";
-                db.Hotels.Remove(hotel);
-                db.SaveChanges();
-                return $"Отель {hotel.Name} удалён";
-
-            }
-        }
-
-        //Remove Nutrition
-        public static string DeleteNutrition(Nutrition nutrition)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (nutrition == null)
-                    return "Невозможно удалить пустое значение";
-                db.Nutritions.Remove(nutrition);
-                db.SaveChanges();
-                return $"Питание {nutrition.Name} удалено";
-            }
-        }
-
-        //Remove Staff
-        public static string DeleteStaff(Staff staff)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (staff == null)
-                    return "Невозможно удалить пустое значение";
-                db.Staves.Remove(staff);
-                db.SaveChanges();
-                return $"Сотрудник {staff.Fio} удалён";
-            }
-        }
-
-        //Remove TourType
-        public static string DeleteToutType(TourType type)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (type == null)
-                    return "Невозможно удалить пустое значение";
-                db.TourTypes.Remove(type);
-                db.SaveChanges();
-                return $"Тип тура {type.Type} удалён";
-            }
-        }
-
-        //Remove Tour
-        public static string DeleteTour(Tour tour)
-        {
-            using (var db = new ApplicationContext())
-            {
-                if (tour == null)
-                    return "Невозможно удалить пустое значение";
-                db.Tours.Remove(tour);
-                db.SaveChanges();
-                return $"Запись тура под номером {tour.Id} удалена";
-            }
-        }
-
-        #endregion
-
-        #region GetMethods
-
-        public static Hotel GetHotelById(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Hotel hotel = db.Hotels.FirstOrDefault(el => el.Id == id);
-                return hotel;
-            }
-        }
-
-        public static Country GetCountryHyId(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Country country = db.Countries.FirstOrDefault(el => el.Id == id);
-                return country;
-            }
-        }
-        public static TourType GetTourTypeById(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                TourType type = db.TourTypes.FirstOrDefault(el => el.Id == id);
-                return type;
-            }
-        }
-        public static Nutrition GetNutritionById(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Nutrition nutrition = db.Nutritions.FirstOrDefault(el => el.Id == id);
-                return nutrition;
-            }
-        }
-        public static Client GetClientById(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Client client = db.Clients.FirstOrDefault(el => el.Id == id);
-                return client;
-            }
-        }
-
-        public static Discount GetDiscountById(int id)
-        {
-            using (var db = new ApplicationContext())
-            {
-                Discount discount = db.Discounts.FirstOrDefault(el => el.Id == id);
-                return discount;
-            }
-        }
-
-        public static List<Client> GetAllClients()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Clients.ToList();
-            }
-        }
-
-        public static List<Country> GetAllCountries()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Countries.ToList();
-            }
-        }
-
-        public static List<Hotel> GetAllHotels()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Hotels.ToList();
-            }
-        }
-
-        public static List<Discount> GetAlDiscounts()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Discounts.ToList();
-            }
-        }
-
-        public static List<Nutrition> GetAllNutritions()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Nutritions.ToList();
-            }
-        }
-
-        public static List<Staff> GetAllStaves()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Staves.ToList();
-            }
-        }
-
-        public static List<TourType> GetAllTourTypes()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.TourTypes.ToList();
-            }
-        }
-
-        public static List<Tour> GetAllTours()
-        {
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                return db.Tours.ToList();
-            }
-        }
-
-        #endregion
     }
 }

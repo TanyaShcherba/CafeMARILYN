@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1550"
+        Title="Администрация кафе MARILYN" Height="800" Width="1300"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModel="clr-namespace:WpfApp1.ViewModel"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -12,100 +12,56 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Name="AdminMain">
+    <Window.Background>
+        <ImageBrush ImageSource="/View/ФонАдминистратор.jpg"/>
+    </Window.Background>
 
     <Window.DataContext>
         <viewModel:DataManage/>
     </Window.DataContext>
 
     <Grid>
-
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="82*"/>
+            <RowDefinition Height="517*"/>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="63*"/>
+            <RowDefinition Height="63*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
 
-        <TabControl 
-            SelectedItem="{Binding TabItem}"
-            Style="{DynamicResource MaterialDesignNavigatilRailTabControl}" Margin="0,0,0,100">
-            <TabItem Name="ClientTab"
-                     Header="Клиенты"
+
+            <ColumnDefinition Width="242*"/>
+            <ColumnDefinition Width="795*"/>
+            <ColumnDefinition Width="263*"/>
+
+
+        </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="/View/ФонАдмин.jpg"/>
+        </Grid.Background>
+
+
+
+        <TabControl
+            SelectedItem="{Binding TabItem}" Margin="0,0,0,1" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2" Grid.ColumnSpan="3">
+            <TabItem Name="CoffeTab"
+                     Header="Напитки" 
                      Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
                      Width="150"
-                     MaxHeight="50">
+                     MaxHeight="50" Margin="241,9,-241,-31" Foreground="#DDFFFFFF" Background="Black" FontWeight="Bold" BorderBrush="White" FontFamily="Century Gothic">
                 <DataGrid AutoGenerateColumns="False"
-                          x:Name="ClientGrid"
                           SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllClients}" Margin="0,0,-2,0">
+                          ItemsSource="{Binding AllDrinksList}" Margin="238,0,260,0" Background="{x:Null}" Height="479" FontFamily="Century Gothic" FontWeight="Normal" Foreground="#DDFFFFFF" BorderBrush="Black">
                     <DataGrid.Columns>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Id"
-                            Width="50"
-                            Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                            IsReadOnly="True"
-                            Header="ФИО"
-                            Width="250"
-                            Binding="{Binding Path=Fio}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                            Header="Номер паспорта"
-                            IsReadOnly="True"
-                            Width="150"
-                            Binding="{Binding Path=PassNum}"></materialDesign:DataGridTextColumn>
-                    </DataGrid.Columns>
-
-                </DataGrid>
-            </TabItem>
-
-            <TabItem Name="StaffTab"
-                     Header="Сотрудники" 
-                     Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
-                     Width="150"
-                     MaxHeight="50">
-                <DataGrid AutoGenerateColumns="False"
-                          x:Name="StaffGrid"
-                          SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllStaves}">
-                    <DataGrid.Columns>
-                        <materialDesign:DataGridTextColumn 
-                            IsReadOnly="True"
-                        Header="Id"
-                        Width="50"
-                        Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                        IsReadOnly="True"
-                        Header="ФИО"
-                        Width="250"
-                        Binding="{Binding Path=Fio}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                        IsReadOnly="True"
-                        Header="Зарплата"
-                        Width="150"
-                        Binding="{Binding Path=Salary}"></materialDesign:DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
-
-            <TabItem Name="HotelTab"
-                     
-                     Header="Отели"
-                     Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
-                     Width="150"
-                     MaxHeight="50">
-                <DataGrid AutoGenerateColumns="False"
-                          x:Name="HotelGrid"
-                          ItemsSource="{Binding AllHotels}"
-                          SelectedItem="{Binding SelectedItem}">
-                    <DataGrid.Columns>
-                        <materialDesign:DataGridTextColumn 
-                        IsReadOnly="True"
-                        Header="Id"
-                        Width="50"
+                        Header="Код"
+                        Width="100"
                         Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                         IsReadOnly="True"
@@ -114,38 +70,9 @@
                         Binding="{Binding Path=Name}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                         IsReadOnly="True"
-                        Header="Класс"
+                        Header="Размер"
                         Width="150"
-                        Binding="{Binding Path=Class}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                            IsReadOnly="True"
-                            Header="Цена за ночь"
-                            Width="150"
-                            Binding="{Binding Path=PriceByNight}"></materialDesign:DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
-
-            <TabItem Name="TourTypeTab"
-                     Header="Типы Туров"
-                     Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
-                     Width="150"
-                     MaxHeight="50">
-                <DataGrid AutoGenerateColumns="False"
-                          x:Name="TypeGrid"
-                          SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllTourTypes}">
-                    <DataGrid.Columns>
-                        <materialDesign:DataGridTextColumn 
-                            IsReadOnly="True"
-                            Header="Id"
-                            Width="50"
-                            Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
-                        <materialDesign:DataGridTextColumn 
-                            IsReadOnly="True"
-                            Header="Тип"
-                            Width="250"
-                            Binding="{Binding Path=Type}"></materialDesign:DataGridTextColumn>
+                        Binding="{Binding Path=Size}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
                             Header="Цена"
@@ -155,21 +82,19 @@
                 </DataGrid>
             </TabItem>
 
-
-            <TabItem Name="CountryTab"
-                     Header="Страны"
+            <TabItem Name="DessertTab"
+                     Header="Дессерты" 
                      Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
                      Width="150"
-                     MaxHeight="50">
+                     MaxHeight="50" Margin="254,8,-254,-30" Foreground="#DDFFFFFF" Background="Black" FontFamily="Century Gothic" FontWeight="Bold" BorderBrush="White">
                 <DataGrid AutoGenerateColumns="False"
-                          x:Name="CountyGrid"
                           SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllCountries}">
+                          ItemsSource="{Binding AllDessertsList}" Margin="237,0,259,0" Background="{x:Null}" Foreground="#DDFFFFFF" BorderBrush="Black" Height="479" FontWeight="Normal">
                     <DataGrid.Columns>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Id"
-                            Width="50"
+                            Header="Код"
+                            Width="100"
                             Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
@@ -178,229 +103,185 @@
                             Binding="{Binding Path=Name}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Цена перелёта"
+                            Header="Вес"
                             Width="150"
-                            Binding="{Binding Path=FlyPrice}"></materialDesign:DataGridTextColumn>
+                            Binding="{Binding Path=Weight}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Цена"
+                            Width="150"
+                            Binding="{Binding Path=Price}"></materialDesign:DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-
             </TabItem>
 
-
-            <TabItem Name="NutrutionTab"
-                     Header="Питание"
+            <TabItem Name="BaristaTab"
+                     Header="Бариста" 
                      Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
                      Width="150"
-                     MaxHeight="50">
+                     MaxHeight="50" Margin="262,8,-262,-30" Background="Black" Foreground="#DDFFFFFF" FontFamily="Century Gothic" FontWeight="Bold" BorderBrush="White">
                 <DataGrid AutoGenerateColumns="False"
-                          Name="NutrGrid"
                           SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllNutritions}">
+                          ItemsSource="{Binding AllBaristaList}" Background="{x:Null}" Foreground="#DDFFFFFF" Margin="236,0,260,0" Height="480" BorderBrush="Black" FontWeight="Normal">
                     <DataGrid.Columns>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Id"
-                            Width="50"
+                            Header="Код"
+                            Width="100"
                             Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Название"
+                            Header="ФИО"
                             Width="250"
-                            Binding="{Binding Path=Name}"></materialDesign:DataGridTextColumn>
+                            Binding="{Binding Path=Fio}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Цена за день"
+                            Header="Разряд"
                             Width="150"
-                            Binding="{Binding Path=PriceByDay}"></materialDesign:DataGridTextColumn>
+                            Binding="{Binding Path=Rating}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="З/П"
+                            Width="150"
+                            Binding="{Binding Path=Salary}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Логин"
+                            Width="150"
+                            Binding="{Binding Path=Login}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Пароль"
+                            Width="150"
+                            Binding="{Binding Path=Password}"></materialDesign:DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
 
-            <TabItem Name="DiscountTab"
-                     Header="Скидки"
-                     
+            <TabItem Name="OrderTab"
+                     Header="Заказы" 
                      Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
                      Width="150"
-                     MaxHeight="50">
+                     MaxHeight="50" Margin="268,10,-268,-32" Foreground="#DDFFFFFF" Background="Black" BorderBrush="White" FontWeight="Bold" FontFamily="Century Gothic">
                 <DataGrid AutoGenerateColumns="False"
-                          Name="DiscGrid"
                           SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding AllDiscounts}">
+                          ItemsSource="{Binding AllOrdersList}" Background="{x:Null}" BorderBrush="Black" Margin="236,0,262,0" Height="479" Foreground="#DDFFFFFF" FontFamily="Century Gothic" FontWeight="Normal">
                     <DataGrid.Columns>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Id"
-                            Width="50"
+                            Header="Код"
+                            Width="100"
                             Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Название"
+                            Header="Дата заказа"
                             Width="250"
-                            Binding="{Binding Path=Name}"></materialDesign:DataGridTextColumn>
+                            Binding="{Binding Path=OrderDateTime}"></materialDesign:DataGridTextColumn>
                         <materialDesign:DataGridTextColumn 
                             IsReadOnly="True"
-                            Header="Процент"
+                            Header="Номер чека"
                             Width="150"
-                            Binding="{Binding Path=Percent}"></materialDesign:DataGridTextColumn>
+                            Binding="{Binding Path=ChequeId}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="ФИО бариста"
+                            Width="300"
+                            Binding="{Binding Path= OrderCheque.ChequeBarista.Fio}"></materialDesign:DataGridTextColumn>
+
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Стоимость заказа"
+                            Width="300"
+                            Binding="{Binding Path= Price}"></materialDesign:DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
 
-            <TabItem Name="ToursTab"
-                     Header="Туры"
+            <TabItem Name="ChequeTab"
+                     Header="Чеки" 
                      Style="{DynamicResource MaterialDesignNavigationRailTabItem}"
                      Width="150"
-                     MaxHeight="50">
+                     MaxHeight="50" Margin="284,8,-284,-30" Background="Black" Foreground="#DDFFFFFF" FontWeight="Bold" BorderBrush="White" FontFamily="Century Gothic">
                 <DataGrid AutoGenerateColumns="False"
-                          Name="ToursGrid"
                           SelectedItem="{Binding SelectedItem}"
-                      ItemsSource="{Binding AllTours}">
+                          ItemsSource="{Binding AllChequesList}" Background="{x:Null}" BorderBrush="Black" Foreground="#DDFFFFFF" FontFamily="Century Gothic" Margin="237,0,263,0" Height="478" FontWeight="Normal">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Width="50" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=Id}"/>
-                        <DataGridTextColumn Header="Цена" Width="100" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=Price}"/>
-                        <DataGridTextColumn Header="Дата отправления" Width="150" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=DepartureDate}"/>
-                        <DataGridTextColumn Header="Количество персон" Width="160" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=PersonCount}"/>
-                        <DataGridTextColumn Header="Количество дней" Width="150" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=DaysCount}"/>
-                        <DataGridTextColumn Header="Страна" Width="100"
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=TourCountry.Name}"/>
-                        <DataGridTextColumn Header="Отель" Width="100" 
-                                            Binding="{Binding Path=TourHotel.Name}"/>
-                        <DataGridTextColumn Header="Тип тура" Width="100" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=TourTourType.Type}"/>
-                        <DataGridTextColumn Header="Питание" Width="100" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=TourNutrition.Name}"/>
-                        <DataGridTextColumn Header="Паспорт клиента" Width="160" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=TourClient.PassNum}"/>
-                        <DataGridTextColumn Header="Скидка" Width="100" 
-                                            IsReadOnly="True"
-                                            Binding="{Binding Path=TourDiscount.Percent}"/>
-                        <DataGridCheckBoxColumn Header="Статус" Width="100"
-                                                IsReadOnly="True"
-                                                Binding="{Binding Path=Status}"/>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Код"
+                            Width="100"
+                            Binding="{Binding Path=Id}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Уникальный код чека"
+                            Width="250"
+                            Binding="{Binding Path=UniqNumber}"></materialDesign:DataGridTextColumn>
+                        <materialDesign:DataGridTextColumn 
+                            IsReadOnly="True"
+                            Header="Бариста"
+                            Width="150"
+                            Binding="{Binding Path=ChequeBarista.Fio}"></materialDesign:DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-            </TabItem>
 
+
+            </TabItem>
         </TabControl>
 
-        <Button Grid.Row="1"
-                Content="Добавить отель"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddHotelWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="200,150,0,0" Cursor="Hand"/>
 
-
-
-        <Button Grid.Row="1"
-                Content="Добавить страну"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddCountruWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="20,150,0,0" Cursor="Hand"/>
 
         <Button
-                Content="Добавить скидку"
+                Content="Добавить бариста"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddDiscountWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="20,15,0,0" Cursor="Hand" Grid.Row="1"/>
+                Width="176" Height="40"
+                Command="{Binding OpenAddBaristaWindow}"
+                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="560,18,0,0" Cursor="Hand" RenderTransformOrigin="0.491,0.538" Background="#FFB80808" Foreground="#DDFFFFFF" FontFamily="Century Gothic" FontWeight="Bold" BorderBrush="Black" Grid.Row="2" Grid.Column="1"/>
 
-        <Button Grid.Row="1"
-                Content="Добавить питание"
+        <Button
+                Content="Добавить напиток"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddnutrutionWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="20,105,0,0" Cursor="Hand"/>
+                Width="176" Height="40"
+                Command="{Binding OpenAddDrinkWindow}"
+                Style="{DynamicResource MaterialDesignRaisedLightButton}" Cursor="Hand" Background="#FFB80808" Foreground="White" FontFamily="Century Gothic" FontWeight="Bold" FontSize="14" BorderBrush="Black" Grid.Row="2" Margin="58,18,0,0" Grid.Column="1"/>
 
-        <Button Grid.Row="1"
-                Content="Добавить тип тура"
+        <Button
+                Content="Добавить дессерт"
                 VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddTourTypeWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="200,60,0,0"/>
+                HorizontalAlignment="Center" 
+                Width="176" Height="40"
+                Command="{Binding OpenAddDesertWindow}"
+                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="0,17,0,0" Cursor="Hand" Background="#FFB80808" Foreground="#DDFFFFFF" FontFamily="Century Gothic" FontWeight="Bold" BorderBrush="Black" Grid.Row="2" Grid.Column="1"/>
 
-        <Button Grid.Row="1"
-                Content="Добавить сотрудника"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddStaffWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="200,105,0,0" Cursor="Hand"/>
-
-        <Button Grid.Row="1"
-                Content="Добавить клиента"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding OpenAddClientWindow}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="20,60,0,0" Cursor="Hand"/>
-
-        <Button Grid.Row="1"
+        <Button
                 Content="Выйти"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
+                VerticalAlignment="Top" Height="40"
                 Command="{Binding Exit}"
                 CommandParameter="{Binding ElementName=AdminMain}"
-                Style="{DynamicResource {x:Type Button}}" Margin="1350,150,20,0" Cursor="Hand"/>
+                Style="{DynamicResource {x:Type Button}}" Margin="560,8,60,0" Cursor="Hand" RenderTransformOrigin="0.559,0.425" Grid.Row="3" Background="#FFFBFBFB" Foreground="#DD000000" FontFamily="Century Gothic" FontWeight="Bold" BorderBrush="Black" Grid.Column="1"/>
 
 
-        <Button Grid.Row="1"
+        <Button
                 Content="Удалить запись"
                 VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
+                HorizontalAlignment="Center" 
+                Width="176" Height="40"
                 Command="{Binding DeleteItem}"
                 CommandParameter="{Binding ElementName=AdminMain}"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="1350,105,20,0" Cursor="Hand"
-                RenderTransformOrigin="0.491,1"/>
+                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="0,9,0,0" Cursor="Hand"
+                RenderTransformOrigin="0.491,1" Grid.Row="3" BorderBrush="Black" Background="White" Foreground="#DD000000" FontFamily="Century Gothic" FontWeight="Bold" Grid.Column="1"/>
 
-        <Button Grid.Row="1"
+        <Button
                 Content="Обновить"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left" 
-                Width="175" Height="40"
+                Width="176" Height="40"
                 Command="{Binding Refresh}"
                 CommandParameter="{Binding ElementName=AdminMain }"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="200,15,0,0" Cursor="Hand"/>
+                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="58,8,0,0" Cursor="Hand" RenderTransformOrigin="0.516,0.474" Grid.Row="3" Foreground="#DD000000" Background="White" FontWeight="Bold" FontFamily="Century Gothic" BorderBrush="Black" Grid.Column="1"/>
 
-        <Button Grid.Row="1"
-                Content="Печать"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Width="175" Height="40"
-                Command="{Binding Print}"
-                CommandParameter="{Binding ElementName=AdminMain }"
-                Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="1350,15,20,0" Cursor="Hand"/>
 
-        <Button
-            Content="Изменить статус"
-            VerticalAlignment="Top"
-            HorizontalAlignment="Left" 
-            Width="175" Height="40"
-            Command="{Binding ChangeStatus}"
-            CommandParameter="{Binding ElementName=AdminMain}"
-            Style="{DynamicResource MaterialDesignRaisedLightButton}" Margin="1350,60,20,0" Cursor="Hand" Grid.Row="1"/>
 
     </Grid>
 

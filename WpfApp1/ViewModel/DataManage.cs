@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Net.Mime;
-using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Marilyn;
+using Marilyn.Data.Units;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.Options;
 using WpfApp1.Annotations;
 using WpfApp1.Model.Data;
-using WpfApp1.Model.UnitDB;
 using WpfApp1.View;
 using WpfApp1.View.AddWindow;
 using WpfApp1.ViewModel.Workers;
@@ -21,136 +20,103 @@ namespace WpfApp1.ViewModel
 {
     public class DataManage : INotifyPropertyChanged
     {
-        private const string FIO_REGEX = @"([А-ЯЁ][а-яё]+[\-\s]?){3,}";
-        private const string PASS_REGEX = @"[A-Z][A-Z][0-9][0-9][0-9][0-9][0-9][0-9][0-9]";
 
         #region DataProp
 
-        private List<Hotel> allHotels = DataWorker.GetAllHotels();
-        public List<Hotel> AllHotels
+        private List<Prouct> allProuctsList = DataWorker.GetAllProdList();
+        public List<Prouct> AllProuctsList
         {
-            get => allHotels;
+            get => allProuctsList;
             set
             {
-                allHotels = value;
-                OnPropertyChanged("AllHotels");
+                allProuctsList = value;
+                OnPropertyChanged("AllProuctsList");
             }
         }
 
-        private List<Client> allClients = DataWorker.GetAllClients();
-        public List<Client> AllClients
+        private List<HotDrinks> allDrinksList = DataWorker.GetAllCoffe();
+        public List<HotDrinks> AllDrinksList
         {
-            get => allClients;
+            get => allDrinksList;
             set
             {
-                allClients = value;
-                OnPropertyChanged("AllClients");
+                allDrinksList = value;
+                OnPropertyChanged("AllDrinksList");
             }
         }
 
-        private List<Staff> allStaves = DataWorker.GetAllStaves();
-        public List<Staff> AllStaves
+
+        private List<Order> allOrdersList = DataWorker.GetAllOrders();
+        public List<Order> AllOrdersList
         {
-            get => allStaves;
+            get => allOrdersList;
             set
             {
-                allStaves = value;
-                OnPropertyChanged("AllStaves");
+                allOrdersList = value;
+                OnPropertyChanged("AllOrdersList");
             }
         }
 
-        private List<Country> allCountries = DataWorker.GetAllCountries();
-        public List<Country> AllCountries
+        private List<Cheque> allChequesList = DataWorker.GetAllCheques();
+        public List<Cheque> AllChequesList
         {
-            get => allCountries;
+            get => allChequesList;
             set
             {
-                allCountries = value;
-                OnPropertyChanged("AllCountries");
+                allChequesList = value;
+                OnPropertyChanged("AllChequesList");
             }
         }
 
-        private List<Discount> allDiscounts = DataWorker.GetAlDiscounts();
-        public List<Discount> AllDiscounts
+        private List<Dessert> allDessertsList = DataWorker.GetAllDessert();
+        public List<Dessert> AllDessertsList
         {
-            get => allDiscounts;
+            get => allDessertsList;
             set
             {
-                allDiscounts = value;
-                OnPropertyChanged("AllDiscounts");
+                allDessertsList = value;
+                OnPropertyChanged("AllDessertsList");
             }
         }
 
-        private List<Nutrition> allNutritions = DataWorker.GetAllNutritions();
-        public List<Nutrition> AllNutritions
+
+        private List<Barista> allBaristas = DataWorker.GetAllBarista();
+        public List<Barista> AllBaristaList
         {
-            get => allNutritions;
+            get => allBaristas;
             set
             {
-                allNutritions = value;
-                OnPropertyChanged("AllNutritions");
+                allBaristas = value;
+                OnPropertyChanged("AllBaristaList");
             }
         }
-
-        private List<TourType> allTourTypes = DataWorker.GetAllTourTypes();
-        public List<TourType> AllTourTypes
-        {
-            get => allTourTypes;
-            set
-            {
-                allTourTypes = value;
-                OnPropertyChanged("AllTourTypes");
-            }
-        }
-
-        private List<Tour> allTours = DataWorker.GetAllTours();
-        public List<Tour> AllTours
-        {
-            get => allTours;
-            set
-            {
-                allTours = value;
-                OnPropertyChanged("AllTours");
-            }
-        }
-
         #endregion
 
         #region Command prop
         public string Login { get; set; }
         public string Password { get; set; }
         public string Position { get; set; }
-        public string HotelName { get; set; }
-        public string HotelClass { get; set; }
-        public string HotelPrice { get; set; }
-        public string CountryName { get; set; }
-        public string FlyPrice { get; set; }
-        public string NutritionName { get; set; }
-        public string NutritionPrice { get; set; }
-        public string ClientFio { get; set; }
-        public string ClientPassNum { get; set; }
-        public string StaffFio { get; set; }
-        public string StaffSalary { get; set; }
-        public string DiscountName { get; set; }
-        public string DiscountPercent { get; set; }
-        public string TourTypeType { get; set; }
-        public string TourTypePrice { get; set; }
+        public string BaristaSalary { get; set; }
+        public string BaristaFio { get; set; }
+        public string BaristaRating { get; set; }
+        public string BaristaLogin { get; set; }
+        public string BaristaPassword { get; set; }
 
-
-        public Country Country { get; set; }
-        public Client Client { get; set; }
-        public Discount Discount { get; set; }
-        public Hotel Hotel { get; set; }
-        public Nutrition Nutrition { get; set; }
-        public TourType TourType { get; set; }
-        public DateTime DepartureDate { get; set; }
-        public string PersonCount { get; set; }
-        public string DaysCount { get; set; }
+        public Barista LogInBarista { get; set; }
+        public string DrinkName { get; set; }
+        public string DrinkSize { get; set; }
+        public string DrinkPrice { get; set; }
+        public string DessertName { get; set; }
+        public string DessertWeight { get; set; }
+        public string DessertPrice { get; set; }
         public object SelectedItem { get; set; }
+
+        public Dessert SelectedDessert { get; set; }
+        public HotDrinks SelectedDrink { get; set; }
         public TabItem TabItem { get; set; }
+        public DataGrid DataGrid { get; set; }
         #endregion
 
-        #region Command to open windows
 
         private RelayCommand openWindow;
         public RelayCommand OpenWindow
@@ -158,274 +124,239 @@ namespace WpfApp1.ViewModel
             get => openWindow ?? new RelayCommand(obj =>
             {
                 Window window = obj as Window;
-                if (Login == null || Password == null || Position == null || Login == "" || Password == "" ||
-                    Position == "")
+            DataWorker.FirstInitialize();
+
+            if (Login == null || Password == null  || Login == "" || Password == "" || Position == null || Position == "")
                     MessageBox.Show("Заполните поля");
                 else
                 {
-                    if (Login == "root" && Password == "root" && Position == "Турагент")
+                    if (DataWorker.ValidateUser(Login, Password) && Position == "Бариста")
                     {
-                        WindowWorker.OpenWindow(new AgentMainWindow());
+                        DataWorker.Barista = DataWorker.ReturnUserByLogin(Login);
+                        WindowWorker.OpenWindow(new BaristaWindow());
                         WindowWorker.CloseWindow(window);
                     }
-                        
-                    else
+                    else if (Login == "admin" && Password == "admin" || Position == "Администратор")
                     {
-                        if (Login == "admin" && Password == "admin" && Position == "Администратор")
-                        {
-                            WindowWorker.OpenWindow(new AdminMainWindow());
-                            WindowWorker.CloseWindow(window);
-                        }
-                        
-                        else
-                            MessageBox.Show("Заполните поля корректно");
+                        WindowWorker.OpenWindow(new AdminMainWindow());
+                        WindowWorker.CloseWindow(window);
                     }
+                    else
+                        MessageBox.Show("Заполните поля корректно");
                 }
             });
         }
 
 
-        private RelayCommand openAddHotelWindow;
-        public RelayCommand OpenAddHotelWindow
+        private RelayCommand openAddBaristaWindow;
+        public RelayCommand OpenAddBaristaWindow
         {
-            get => openAddHotelWindow ?? new RelayCommand(obj =>
+            get => openAddBaristaWindow ?? new RelayCommand(obj =>
             {
-                WindowWorker.OpenWindow(new AddHotelWindow());
+                WindowWorker.OpenWindow(new AddBaristaWindow());
             });
         }
 
-
-        private RelayCommand openAddCountruWindow;
-        public RelayCommand OpenAddCountruWindow
+        private RelayCommand openMainBaristaWindow;
+        public RelayCommand OpenMainBaristaWindow
         {
-            get => openAddCountruWindow ?? new RelayCommand(obj =>
+            get => openAddBaristaWindow ?? new RelayCommand(obj =>
             {
-                WindowWorker.OpenWindow(new AddNewCountryWindow());
+                WindowWorker.OpenWindow(new BaristaMainWindow());
             });
         }
 
+        private RelayCommand openAddDrinkWindow;
 
-        private RelayCommand openAddnutrutionWindow;
-        public RelayCommand OpenAddnutrutionWindow
+        public RelayCommand OpenAddDrinkWindow
         {
-            get => openAddnutrutionWindow ?? new RelayCommand(obj =>
+            get => openAddDrinkWindow ?? new RelayCommand(obj =>
             {
-                WindowWorker.OpenWindow(new AddNutritionWindow());
+                WindowWorker.OpenWindow(new AddDrinkWindow());
             });
         }
 
+        private RelayCommand openAddDesertWindow;
 
-        private RelayCommand openAddClientWindow;
-        public RelayCommand OpenAddClientWindow
+        public RelayCommand OpenAddDesertWindow
         {
-            get => openAddClientWindow ?? new RelayCommand(obj =>
+            get => openAddDesertWindow ?? new RelayCommand(obj =>
             {
-                WindowWorker.OpenWindow(new AddClientWindow());
+                WindowWorker.OpenWindow(new AddDesertWindow());
             });
         }
 
+        private RelayCommand addNewBarista;
 
-        private RelayCommand openAddStaffWindow;
-        public RelayCommand OpenAddStaffWindow
+        public RelayCommand AddNewBarista
         {
-            get => openAddStaffWindow ?? new RelayCommand(obj =>
+            get => addNewBarista ?? new RelayCommand(obj =>
             {
-                WindowWorker.OpenWindow(new AddStaffWindow());
-            });
-        }
-
-
-        private RelayCommand openAddTourTypeWindow;
-        public RelayCommand OpenAddTourTypeWindow
-        {
-            get => openAddTourTypeWindow ?? new RelayCommand(obj =>
-            {
-                WindowWorker.OpenWindow(new AddTourTypeWindow());
-            });
-        }
-
-        private RelayCommand openAddDiscountWindow;
-        public RelayCommand OpenAddDiscountWindow
-        {
-            get => openAddTourTypeWindow ?? new RelayCommand(obj =>
-            {
-                WindowWorker.OpenWindow(new AddDiscountWindow());
-            });
-        }
-
-        private RelayCommand openAddNewTourWindow;
-
-        public RelayCommand OpenAddNewTourWindow
-        {
-            get => openAddNewTourWindow ?? new RelayCommand(obj =>
-            {
-                WindowWorker.OpenWindow(new AddTourWindow());
-            });
-        }
-
-
-        private RelayCommand addDiscount;
-        public RelayCommand AddDiscount
-        {
-            get => addDiscount ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(DiscountName) && !string.IsNullOrEmpty(DiscountPercent) &&
-                    int.TryParse(DiscountPercent, out int discountResult) &&
-                    (discountResult >= 0 && discountResult <= 50))
+                if (!string.IsNullOrEmpty(BaristaFio)
+                    && !string.IsNullOrEmpty(BaristaRating)
+                    && !string.IsNullOrEmpty(BaristaSalary)
+                    && !string.IsNullOrEmpty(BaristaLogin)
+                    && !string.IsNullOrEmpty(BaristaPassword)
+                    && int.TryParse(BaristaRating, out int ratingResult)
+                    && double.TryParse(BaristaSalary, out double salaryResult))
                 {
-                    MessageBox.Show(DataWorker.AddNewDiscount(discountResult, DiscountName));
-                    WindowWorker.Refresh(new AdminMainWindow());
+                    if(DataWorker.AddNewBarista(BaristaFio, ratingResult, salaryResult, BaristaLogin, BaristaPassword))
+                         MessageBox.Show("Сотрудник успешно добавлен");
+                    else
+                        MessageBox.Show("Сотрудник уже существует");
                 }
                 else
                 {
-                    MessageBox.Show("Заполните поля корректными данными (Скидка от 0 до 50)");
+                    MessageBox.Show("Корректно заполните поля");
                 }
             });
         }
 
 
-        private RelayCommand addTourType;
-        public RelayCommand AddTourType
+        private RelayCommand addNewDrink;
+        public RelayCommand AddNewDrink
         {
-            get => addTourType ?? new RelayCommand(obj =>
+            get => addNewDrink ?? new RelayCommand(obj =>
             {
-                if (!string.IsNullOrEmpty(TourTypePrice) && !string.IsNullOrEmpty(TourTypeType) &&
-                    double.TryParse(TourTypePrice, out double priceResult) && priceResult > 0)
+                if (!string.IsNullOrEmpty(DrinkName)
+                    && !string.IsNullOrEmpty(DrinkSize)
+                    && !string.IsNullOrEmpty(DrinkPrice)
+                    && double.TryParse(DrinkPrice, out double priceResult))
                 {
-                    MessageBox.Show(DataWorker.AddNewTourType(TourTypeType, priceResult)); 
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
-                else
-                {
-                    MessageBox.Show("Заполните поля корректными данными");
-                }
-            });
-        }
-
-
-        private RelayCommand addNewStaff;
-        public RelayCommand AddNewStaff
-        {
-            get => addNewStaff ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(StaffFio) && !string.IsNullOrEmpty(StaffSalary) &&
-                    double.TryParse(StaffSalary, out double salaryResult) && Regex.IsMatch(StaffFio, FIO_REGEX)
-                    && (salaryResult > 400))
-                {
-                    MessageBox.Show(DataWorker.AddNewStaff(StaffFio, salaryResult));
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
-                else
-                {
-                    MessageBox.Show("Заполните поля корректными данными (Зарплата не ниже 400)");
-                }
-            });
-        }
-
-
-        private RelayCommand addNewClient;
-        public RelayCommand AddNewClient
-        {
-            get => addNewClient ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(ClientFio)
-                    && !string.IsNullOrEmpty(ClientPassNum)
-                    && Regex.IsMatch(ClientFio, FIO_REGEX)
-                    && Regex.IsMatch(ClientPassNum, PASS_REGEX))
-                {
-                    MessageBox.Show(DataWorker.AddNewClient(ClientFio, ClientPassNum));
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
-                else
-                    MessageBox.Show("Заполните поля корректными данными");
-            });
-        }
-
-
-        private RelayCommand addNewHotel;
-        public RelayCommand AddNewHotel
-        {
-            get => addNewHotel ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(HotelName) 
-                    && !string.IsNullOrEmpty(HotelClass) 
-                    && !string.IsNullOrEmpty(HotelPrice) 
-                    && int.TryParse(HotelClass, out int cResult) 
-                    && double.TryParse(HotelPrice, out double pResult)
-                    && pResult > 0)
-                {
-                    MessageBox.Show(DataWorker.AddNewHotel(HotelName, cResult, pResult));
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
-                else
-                    MessageBox.Show("Заполните поля корректными данными");
-
-            });
-        }
-
-
-        private RelayCommand addNewNutrition;
-        public RelayCommand AddNewNutrition
-        {
-            get => addNewNutrition ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(NutritionName) && !string.IsNullOrEmpty(NutritionPrice) &&
-                    double.TryParse(NutritionPrice, out double priceResult) && priceResult >= 0)
-                {
-                    MessageBox.Show(DataWorker.AddNewNutrition(NutritionName, priceResult));
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
-                  
-                else
-                    MessageBox.Show("Заполните поля корректными данными");
-            });
-        }
-
-
-        private RelayCommand addNewCountry;
-        public RelayCommand AddNewCounty
-        {
-            get => addNewCountry ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(CountryName) && !string.IsNullOrEmpty(FlyPrice) &&
-                    double.TryParse(FlyPrice, out double priceResult) && priceResult > 0)
-                {
-                    MessageBox.Show(DataWorker.AddNewCountry(CountryName, priceResult));
-                    WindowWorker.Refresh(new AdminMainWindow());
-                }
+                    if (DataWorker.AddNewDrink(DrinkName, DrinkSize, priceResult))
+                        MessageBox.Show("Напиток успешно добавлен");
+                    else
+                        MessageBox.Show("Напиток уже существует");
                     
+                }
                 else
-                    MessageBox.Show("Заполните поля корректными данными");
+                {
+                    MessageBox.Show("Корректно заполните поля");
+                }
+            });
+        }
+
+        private RelayCommand calculateFinalPrice;
+        public RelayCommand CalculateFinalPrice
+        {
+            get => addNewDrink ?? new RelayCommand(obj =>
+            {
+                if (DataWorker.GetAllProdList().Count != 0)
+                    MessageBox.Show("Итоговая цена " + DataWorker.CalculateFinalPrice() + " руб");
+                else
+                {
+                    MessageBox.Show("Корзина пуста");
+                }
+            });
+        }
+
+        private RelayCommand addDessertToOrder;
+        public RelayCommand AddDessertToOrder
+        {
+            get => addDessertToOrder ?? new RelayCommand(obj =>
+            {
+                Window window = obj as Window;
+                if (SelectedDessert != null)
+                {
+                    DataWorker.AddNewProduct(SelectedDessert);
+                    WindowWorker.Refresh(window);
+                }
+                else
+                {
+                    MessageBox.Show("Выберите дессерт из списка");
+                }
 
             });
         }
 
-        private RelayCommand addNewTour;
-
-        public RelayCommand AddNewTour
+        private RelayCommand addDrinkToOrder;
+        public RelayCommand AddDrinkToOrder
         {
-            get => addNewTour ?? new RelayCommand(obj =>
+            get => addDrinkToOrder ?? new RelayCommand(obj =>
             {
-                if (!string.IsNullOrEmpty(ClientFio)
-                    && !string.IsNullOrEmpty(CountryName)
-                    && !string.IsNullOrEmpty(HotelName)
-                    && !string.IsNullOrEmpty(NutritionName)
-                    && !string.IsNullOrEmpty(TourTypeType)
-                    && !string.IsNullOrEmpty(DiscountName)
-                    && !string.IsNullOrEmpty(PersonCount)
-                    && !string.IsNullOrEmpty(DaysCount)
-                    && int.TryParse(PersonCount, out int personResult)
-                    && int.TryParse(DaysCount, out int daysResult)
-                    && personResult > 0
-                    && daysResult > 0)
+                Window window = obj as Window;
+                if (SelectedDrink != null)
                 {
-                    MessageBox.Show(DataWorker.AddNewTour(DepartureDate, personResult, daysResult, Country, Hotel, TourType, Nutrition,
-                        Client, Discount));
+                    DataWorker.AddNewProduct(SelectedDrink);
+                    WindowWorker.Refresh(window);
                 }
                 else
                 {
-                    MessageBox.Show("Заполните все поля корректными данными");
+                    MessageBox.Show("Выберите напиток из списка");
                 }
+            });
+        }
+
+        private RelayCommand addNewDesert;
+        public RelayCommand AddNewDesert
+        {
+            get => addNewDesert ?? new RelayCommand(obj =>
+            {
+                if (!string.IsNullOrEmpty(DessertName)
+                    && !string.IsNullOrEmpty(DessertPrice)
+                    && !string.IsNullOrEmpty(DessertWeight)
+                    && int.TryParse(DessertWeight, out int weightResult)
+                    && double.TryParse(DessertPrice, out double priceResult))
+                {
+                    if (DataWorker.AddNewDesert(DessertName, weightResult, priceResult))
+                        MessageBox.Show("Десерт успешно добавлен");
+                    else
+                        MessageBox.Show("Десерт уже существует");
+
+                }
+                else
+                {
+                    MessageBox.Show("Корректно заполните поля");
+                }
+            });
+        }
+
+        private RelayCommand clearProduct;
+        public RelayCommand ClearProduct
+        {
+            get => clearProduct ?? new RelayCommand(obj =>
+            {
+                Window window = obj as Window;
+                DataWorker.ClearProducst();
+                WindowWorker.Refresh(window);
+            });
+        }
+
+        private RelayCommand createNewOrder;
+        public RelayCommand CreateNewOrder
+        {
+            get => createNewOrder ?? new RelayCommand(obj =>
+            {
+                Window window = obj as Window;
+                if (DataWorker.Proucts.Count > 0)
+                {
+                    DataWorker.AddNewOrder(DataWorker.Barista);
+                    WindowWorker.Refresh(window);
+                }
+                else
+                {
+                    MessageBox.Show("Внесите хотя бы 1 товар в корзину");
+                }
+               
+               
+            });
+        }
+
+        private RelayCommand deleteItemFromOrder;
+        public RelayCommand DeleteItemFromOrder
+        {
+            get => deleteItemFromOrder ?? new RelayCommand(obj =>
+            {
+                Window window = obj as Window;
+                string result = "Ничего не выбрано";
+
+                    if (SelectedItem is Prouct selected)
+                    {
+                        DataWorker.RemoveProduct(selected);
+                        WindowWorker.Refresh(window);
+                    }
+                    else
+                        MessageBox.Show(result);
             });
         }
 
@@ -438,65 +369,41 @@ namespace WpfApp1.ViewModel
                 string result = "Ничего не выбрано";
                 if ((TabItem != null && SelectedItem != null))
                 {
-                    if (TabItem.Name == "HotelTab")
+                    if (TabItem.Name == "CoffeTab")
                     {
-                       
-                        result = DataWorker.DeleteHotel(SelectedItem as Hotel);
+
+                        result = DataWorker.DeleteDrink(SelectedItem as HotDrinks);
                         MessageBox.Show(result);
                         WindowWorker.Refresh(window);
                     }
 
-                    if (TabItem.Name == "ClientTab")
+                    if (TabItem.Name == "DessertTab")
                     {
-                        result = DataWorker.DeleteClient(SelectedItem as Client);
+                        result = DataWorker.DeleteDesser(SelectedItem as Dessert);
                         MessageBox.Show(result);
                         WindowWorker.Refresh(window);
                     }
 
-                    if (TabItem.Name == "StaffTab")
+                    if (TabItem.Name == "BaristaTab")
                     {
-                        result = DataWorker.DeleteStaff(SelectedItem as Staff);
+                        result = DataWorker.DeleteBarista(SelectedItem as Barista);
                         MessageBox.Show(result);
                         WindowWorker.Refresh(window);
                     }
 
-                    if (TabItem.Name == "TourTypeTab")
+                    if (TabItem.Name == "OrderTab")
                     {
-                        result = DataWorker.DeleteToutType(SelectedItem as TourType);
+                        result = DataWorker.DeleteOrder(SelectedItem as Order);
                         MessageBox.Show(result);
                         WindowWorker.Refresh(window);
                     }
 
-                    if (TabItem.Name == "CountryTab")
+                    if (TabItem.Name == "ChequeTab")
                     {
-                        result = DataWorker.DeleteCountry(SelectedItem as Country);
+                        result = DataWorker.DeleteCheque(SelectedItem as Cheque);
                         MessageBox.Show(result);
                         WindowWorker.Refresh(window);
                     }
-
-
-                    if (TabItem.Name == "DiscountTab")
-                    {
-                        result = DataWorker.DeleteDiscount(SelectedItem as Discount);
-                        MessageBox.Show(result);
-                        WindowWorker.Refresh(window);
-                    }
-
-                    if (TabItem.Name == "NutrutionTab")
-                    {
-                        result = DataWorker.DeleteNutrition(SelectedItem as Nutrition);
-                        MessageBox.Show(result);
-                        WindowWorker.Refresh(window);
-                    }
-
-                    if (TabItem.Name == "ToursTab")
-                    {
-                        result = DataWorker.DeleteTour(SelectedItem as Tour);
-                        MessageBox.Show(result);
-                        WindowWorker.Refresh(window);
-                    }
-
-
                 }
                 else
                     MessageBox.Show(result);
@@ -525,110 +432,6 @@ namespace WpfApp1.ViewModel
                 WindowWorker.CloseWindow(window);
             });
         }
-
-        private RelayCommand print;
-        public RelayCommand Print
-        {
-            get => print ?? new RelayCommand(obj =>
-            {
-                Window window = obj as Window;
-                PrintDialog dialog = new PrintDialog();
-                if (dialog.ShowDialog() == true)
-                {
-                    if (TabItem != null)
-                    {
-                        if (TabItem.Name == "ClientTab")
-                            dialog.PrintVisual(window.FindName("ClientGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "StaffTab")
-                            dialog.PrintVisual(window.FindName("StaffGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "HotelTab")
-                            dialog.PrintVisual(window.FindName("HotelGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "TourTypeTab")
-                            dialog.PrintVisual(window.FindName("TypeGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "CountryTab")
-                            dialog.PrintVisual(window.FindName("CountyGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "NutrutionTab")
-                            dialog.PrintVisual(window.FindName("NutrGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "DiscountTab")
-                            dialog.PrintVisual(window.FindName("DiscGrid") as Visual, "Отчёт");
-
-                        if (TabItem.Name == "ToursTab")
-                            dialog.PrintVisual(window.FindName("ToursGrid") as Visual, "Отчёт");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Ничего не выбрано");
-                    }
-                   
-                }
-            });
-        }
-
-        private RelayCommand changeStatus;
-
-        public RelayCommand ChangeStatus
-        {
-            get => changeStatus ?? new RelayCommand(obj =>
-            {
-                Window window = obj as Window;
-                string result = "Выберите тур из списка";
-                if ((TabItem != null && SelectedItem != null))
-                {
-                    if (TabItem.Name == "ToursTab")
-                    {
-                        result = DataWorker.ChangeTourStatus(SelectedItem as Tour);
-                        MessageBox.Show(result);
-                        WindowWorker.Refresh(window);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show(result);
-                }
-            });
-        }
-
-        private RelayCommand calculatePrice;
-        public RelayCommand CalculatePrice
-        {
-            get => calculatePrice ?? new RelayCommand(obj =>
-            {
-                if (!string.IsNullOrEmpty(ClientFio)
-                    && !string.IsNullOrEmpty(CountryName)
-                    && !string.IsNullOrEmpty(HotelName)
-                    && !string.IsNullOrEmpty(NutritionName)
-                    && !string.IsNullOrEmpty(TourTypeType)
-                    && !string.IsNullOrEmpty(DiscountName)
-                    && !string.IsNullOrEmpty(PersonCount)
-                    && !string.IsNullOrEmpty(DaysCount)
-                    && int.TryParse(PersonCount, out int personResult)
-                    && int.TryParse(DaysCount, out int daysResult)
-                    && personResult > 0
-                    && daysResult > 0)
-                {
-
-
-                    double temp = (Hotel.PriceByNight * int.Parse(DaysCount)) + (Nutrition.PriceByDay * int.Parse(DaysCount)) + (Country.FlyPrice * 2) + TourType.Price;
-                    double agencyPrice = temp * 0.3 + temp;
-                    if (Discount.Percent != 0)
-                        agencyPrice = agencyPrice - (agencyPrice * (Discount.Percent / 100.0));
-
-                    MessageBox.Show($"Чистая стоимость: {Math.Round(temp, 2) }\nНаценка компании: {Math.Round(temp * 0.3, 2)}\nИтоговая стоимость: {Math.Round(agencyPrice, 2)}");
-                }
-                else
-                {
-                    MessageBox.Show("Заполните все поля корректными данными");
-                }
-            });
-        }
-
-        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 

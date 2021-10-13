@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\User\Desktop\Folder\Курсовая КПИЯП\WpfApp1\WpfApp1\obj\Debug\net5.0-windows\
+C:\Users\Tanya\Desktop\Обучение\Моя флешка\КУРСОВАЯ КПиЯП\ГОТОВОЕ\Диск\T917024\WpfApp1\obj\Debug\net5.0-windows\
 WpfApp1
 none
 false
 TRACE;DEBUG;NET;NET5_0;NETCOREAPP
-C:\Users\User\Desktop\Folder\Курсовая КПИЯП\WpfApp1\WpfApp1\App.xaml
-11-229818099
+C:\Users\Tanya\Desktop\Обучение\Моя флешка\КУРСОВАЯ КПиЯП\ГОТОВОЕ\Диск\T917024\WpfApp1\App.xaml
+81921687908
 
-32-2022754273
-2161577520575
-View\AddWindow\AddClientWindow.xaml;View\AddWindow\AddDiscountWindow.xaml;View\AddWindow\AddHotelWindow.xaml;View\AddWindow\AddNewCountryWindow.xaml;View\AddWindow\AddNutritionWindow.xaml;View\AddWindow\AddStaffWindow.xaml;View\AddWindow\AddTourTypeWindow.xaml;View\AddWindow\AddTourWindow.xaml;View\AdminMainWindow.xaml;View\AgentMainWindow.xaml;View\LoginWindow.xaml;
+27-684474314
+219-2134613234
+View\AddWindow\AddBaristaWindow.xaml;View\AddWindow\AddDesertWindow.xaml;View\AddWindow\AddDrinkWindow.xaml;View\AddWindow\BaristaWindow.xaml;View\AdminMainWindow.xaml;View\BaristaMainWindow.xaml;View\LoginWindow.xaml;View\PrintForm.xaml;
 
 False
 

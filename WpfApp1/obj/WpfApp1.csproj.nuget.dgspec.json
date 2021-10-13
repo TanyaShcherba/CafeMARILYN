@@ -1,24 +1,29 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\Folder\\Курсовая КПИЯП\\WpfApp1\\WpfApp1\\WpfApp1.csproj": {}
+    "C:\\Users\\Tanya\\Desktop\\Обучение\\Моя флешка\\КУРСОВАЯ КПиЯП\\ГОТОВОЕ\\Диск\\T917024\\WpfApp1\\WpfApp1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\Folder\\Курсовая КПИЯП\\WpfApp1\\WpfApp1\\WpfApp1.csproj": {
+    "C:\\Users\\Tanya\\Desktop\\Обучение\\Моя флешка\\КУРСОВАЯ КПиЯП\\ГОТОВОЕ\\Диск\\T917024\\WpfApp1\\WpfApp1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\Folder\\Курсовая КПИЯП\\WpfApp1\\WpfApp1\\WpfApp1.csproj",
+        "projectUniqueName": "C:\\Users\\Tanya\\Desktop\\Обучение\\Моя флешка\\КУРСОВАЯ КПиЯП\\ГОТОВОЕ\\Диск\\T917024\\WpfApp1\\WpfApp1.csproj",
         "projectName": "WpfApp1",
-        "projectPath": "C:\\Users\\User\\Desktop\\Folder\\Курсовая КПИЯП\\WpfApp1\\WpfApp1\\WpfApp1.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\Folder\\Курсовая КПИЯП\\WpfApp1\\WpfApp1\\obj\\",
+        "projectPath": "C:\\Users\\Tanya\\Desktop\\Обучение\\Моя флешка\\КУРСОВАЯ КПиЯП\\ГОТОВОЕ\\Диск\\T917024\\WpfApp1\\WpfApp1.csproj",
+        "packagesPath": "C:\\Users\\Tanya\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tanya\\Desktop\\Обучение\\Моя флешка\\КУРСОВАЯ КПиЯП\\ГОТОВОЕ\\Диск\\T917024\\WpfApp1\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Tanya\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0-windows"
+          "net5.0-windows7.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -40,9 +45,17 @@
         "net5.0-windows7.0": {
           "targetAlias": "net5.0-windows",
           "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
             "MaterialDesignThemes": {
               "target": "Package",
               "version": "[4.2.0-ci2581, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.7, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
@@ -73,7 +86,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
         }
       }
     }
